@@ -19,4 +19,29 @@ router.post("/api/products", async (req, res) => {
   }
 });
 
+//GET /:id - Get a single Product by ID
+
+router.get("/api/products/:id", async (req, res) => {
+  try {
+    //find product by ID
+    const product = await Product.findById(req.params.id);
+
+    //if not found return 404
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    //return the product
+    res.json(product);
+  } catch (error) {
+    //handle invalid ObjectId format
+    if (error.name === "CastError") {
+      return res.status(400).json({ error: "Invalid product ID" });
+    }
+
+    //handle unexpected server errors
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 module.exports = router;
