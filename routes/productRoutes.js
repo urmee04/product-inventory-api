@@ -78,4 +78,31 @@ router.put("/api/products/:id", async (req, res) => {
   }
 });
 
+//---------------------------------------
+//DELETE /:id - Deletes a book by its _id
+//---------------------------------------
+
+router.delete("/api/products/:id", async (req, res) => {
+  try {
+    //find and delete product by ID
+    const product = await Product.findByIdAndDelete(req.params.id);
+
+    //if product not found return 404
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    //return success message
+    res.json({ message: "Product deleted successfully" });
+  } catch (error) {
+    //handle invalid ObjectId format
+    if (error.name === "CastError") {
+      return res.status(400).json({ error: "Invalid product ID" });
+    }
+
+    //handle unexpected server errors
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 module.exports = router;
