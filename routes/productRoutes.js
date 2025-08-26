@@ -105,4 +105,57 @@ router.delete("/api/products/:id", async (req, res) => {
   }
 });
 
+//-------------------------------------------------------------
+// GET /api/products - Read All Products with Advanced Querying
+//-------------------------------------------------------------
+router.get("/api/products", async (req, res) => {
+  try {
+    //destructure query parameters with defaults
+    const {
+      category,
+      minPrice,
+      maxPrice,
+      sortBy,
+      page = 1,
+      limit = 10,
+    } = req.query;
+
+    //build filter object dynamically
+    const filter = {};
+    if (category) filter.category = category;
+    if (minPrice) filter.price = { ...filter.price, $gte: Number(minPrice) };
+    if (maxPrice) filter.price = { ...filter.price, $lte: Number(maxPrice) };
+
+    //build sort options
+    let sort = {};
+    if (sortBy) {
+      const [field, order] = sortBy.split("_");
+      sort[field] = order === "desc" ? -1 : 1;
+    }
+
+    //pagination calculation
+    const skip = (Number(page) - 1) * Number(limit);
+
+    //execute query
+    const products = await Product.find(filter)
+      .sort(sort)
+      .skip(skip)
+      .limit(Number(limit));
+
+    //count total for pagination metadata
+    const total = await Product.countDocuments(filter);
+
+    //send response with metadata
+    res.json({
+      total,
+      page: Number(page),
+      limit: Number(limit),
+      totalPages: Math.ceil(total / Number(limit)),
+      products,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 module.exports = router;
