@@ -8,7 +8,7 @@ const Product = require("../models/Product");
 //POST / - Creates a new product using the data in req.body
 //---------------------------------------------------------
 
-router.post("/api/products", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const product = await Product.create(req.body);
     //return the product directly
@@ -24,7 +24,7 @@ router.post("/api/products", async (req, res) => {
 //GET /:id - Get a single Product by ID
 //--------------------------------------
 
-router.get("/api/products/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     //find product by ID
     const product = await Product.findById(req.params.id);
@@ -51,7 +51,7 @@ router.get("/api/products/:id", async (req, res) => {
 //PUT /:id - Updates a book by its _id using the data in req.body
 //----------------------------------------------------------------
 
-router.put("/api/products/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     //find product by ID and update with request body
     const updatedProduct = await Product.findByIdAndUpdate(
@@ -82,7 +82,7 @@ router.put("/api/products/:id", async (req, res) => {
 //DELETE /:id - Deletes a book by its _id
 //---------------------------------------
 
-router.delete("/api/products/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     //find and delete product by ID
     const product = await Product.findByIdAndDelete(req.params.id);
@@ -108,7 +108,7 @@ router.delete("/api/products/:id", async (req, res) => {
 //-------------------------------------------------------------
 // GET /api/products - Read All Products with Advanced Querying
 //-------------------------------------------------------------
-router.get("/api/products", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     //destructure query parameters with defaults
     const {
